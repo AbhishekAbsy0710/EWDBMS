@@ -728,18 +728,13 @@ Availability (A):
 Every request receives a response, even if it may not reflect the most recent write. The system continues to serve users without interruption.
 Partition Tolerance (P):
 The system continues to function even if communication between nodes is lost or delayed (i.e., the network is partitioned).
+
 Why All Three Cannot Be Guaranteed
 A distributed system cannot provide Consistency, Availability, and Partition Tolerance simultaneously. During a network partition, the system must choose between:
 Consistency: blocking some requests until data is synchronized.
 Availability: serving potentially stale data to ensure the system is responsive.
 Thus, in the presence of a partition, designers must compromise on either C or A while always tolerating P.
-Case Study: Online Banking System
-For an online banking system, the priority is:
-Consistency (C): Balances and transactions must always reflect the correct and up-to-date state. If Alice transfers money to Bob, both accounts must show accurate balances — no stale data allowed.
-Partition Tolerance (P): Banking services are global and run across distributed servers. They must remain operational even if part of the network is down.
-Availability (A) is compromised: If a network partition occurs, the system may temporarily block access rather than show outdated or inconsistent account balances. Users may see a "service unavailable" error instead of incorrect financial information.
-This trade-off makes sense: it is better to have a short downtime than risk showing or executing incorrect transactions.
-Reflection
+
 Understanding the CAP theorem helps database designers make informed trade-offs:
 For banking, prioritize accuracy (Consistency + Partition Tolerance).
 For social media, prioritize speed and availability (Availability + Partition Tolerance), even if posts or likes appear slightly delayed.
@@ -761,6 +756,7 @@ Can increase latency, especially in geo-distributed systems.
 May result in temporary unavailability during network partitions because the system would rather reject a request than return stale data.
 Real-World Example:
 Online Banking: If you transfer money from Account A to Account B, you must immediately see the updated balance on all devices. Showing an old balance could lead to overdrafts or double spending.
+
 2. Availability (A)
 Definition:
 Availability means that every request receives a (non-error) response — even if it may not reflect the latest data.
@@ -775,6 +771,7 @@ Risk of serving stale data if the latest update hasn’t reached all nodes yet.
 May require conflict resolution later (eventual consistency).
 Real-World Example:
 Social Media Platforms: When you like a post, the system shows it as liked immediately, even if the updated like count might take a few seconds to appear globally. This gives users a smooth experience.
+
 3. Partition Tolerance (P)
 Definition:
 Partition tolerance means that the system continues to operate even if network failures or partitions occur that prevent some nodes from communicating with others.
@@ -828,31 +825,24 @@ You cannot both guarantee that the ledgers stay perfectly in sync and serve the 
 CAP Theorem Application: Online Banking System
 Chosen System: Online Banking
 Which Two Properties It Prioritizes
-Consistency (C): 
-Reason: In banking, it is critical that all users see the correct, up-to-date balance.
-Example: If Alice transfers $100 to Bob, both their accounts must reflect this transaction correctly and immediately — otherwise, money could be lost or duplicated.
-Impact: Strong consistency prevents double-spending, incorrect balances, or overdrafts.
-Partition Tolerance (P): 
-Reason: Banks operate globally, and network issues between data centers are unavoidable.
-Example: Even if the network between two branches is temporarily down, the system must be able to handle the partition without crashing.
-Impact: Ensures the banking system continues to function, at least in a controlled way, during network failures.
+Consistency (C):
+Reason: In banking, all users must see the correct, up-to-date balance.
+Example: When Alice sends $100 to Bob, their two accounts need to update correctly and instantly — otherwise, money would get lost or duplicated.
+Impact: High consistency prevents double-spending, wrong balances, or overdraws.
+Partition Tolerance (P):
+Reason: Banks are worldwide, and partitioning networks between data centers is unavoidable.
+Example: Even when the network between two branches is temporarily disconnected, the system must be able to survive the partition without failure.
+Impact: Ensures that the banking system still keeps running, at least in a controlled way, when networks fail.
 Which Property It Compromises
-Availability (A): 
-Reason: During a network partition, the system may choose to block or delay some transactions rather than risk showing outdated or inconsistent data.
-Example: If you try to withdraw money when the system cannot confirm your actual balance, it may temporarily deny the request (“Service unavailable”) until the network issue is resolved.
-Impact: Customers might face short service interruptions, but this is safer than allowing transactions with wrong balances.
-Justification
-Online banking systems must be 100% accurate with data because financial transactions are highly sensitive. Sacrificing availability for a short period is acceptable if it avoids errors like double withdrawals or incorrect account balances.
-In other words:
+Availability (A):
+Explanation: The system may prefer to block or delay certain transactions rather than risking the presentation of outdated or inconsistent information in case of network partition.
+Example: While you try to withdraw money when the system cannot confirm your actual balance, it may reject the transaction temporarily ("Service unavailable") while the network failure is fixed.
+Consequence: Customers may face temporary loss of service, but that's safer than conducting transactions based on wrong balances.
+Rationale
+Online banking systems must be 100% consistent with information because money transactions are highly sensitive. It is okay to compromise availability for a limited time if it avoids such errors as double withdrawal or incorrect balances.
+That is,
 Banking systems are CP systems (Consistency + Partition Tolerance)
-They compromise Availability during failures to ensure financial integrity.
-
-Reflection: Importance of CAP Theorem
-Understanding the CAP Theorem enables database designers to make smarter trade-offs when building distributed systems. Since network failures are inevitable, designers must decide whether to prioritize consistency, availability, or a balance of both. This ensures that the system meets business needs while remaining reliable and scalable.
-Key Takeaways:
-Aligns system design with business priorities – e.g., financial apps choose consistency, social media prefers availability.
-Guides technology selection – helps choose between SQL (strong consistency) and NoSQL (eventual consistency).
-Improves fault tolerance – ensures predictable behavior during network failures and system partitions.
+They compromise Availability during failures for money integrity.
 
 Reflection: Importance of CAP Theorem for Database Designers
 Understanding the CAP Theorem is essential for database designers because it helps them make informed trade-offs when building and scaling distributed systems. In real-world scenarios, network failures and partitions are unavoidable, so designers must choose which properties (Consistency, Availability, Partition Tolerance) are most critical for their application.
